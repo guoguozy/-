@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # 添加源
 RUN sudo apt-get update
 RUN sudo apt-get install -y --assume-yes apt-transport-https ca-certificates curl software-properties-common
-RUN sudo apt-get install -y --assume-yes apt-utils && sudo apt-get install -y vim libssl-dev
+RUN sudo apt-get install -y --assume-yes apt-utils && sudo apt-get install -y vim libssl-dev environment-modules
 
 
 #openssl
@@ -34,12 +34,25 @@ WORKDIR /home/app/cmake-3.19.8
 RUN sudo ./bootstrap && sudo make && sudo make install
 RUN export PATH="/usr/local/cmake/bin:$PATH"
 
-#gromacs
-RUN sudo apt-get install -y fftw3 fftw3-dev pkg-config
+#module
+RUN echo "source /usr/share/modules/init/bash" >> ~/.bashrc
+RUN echo "export MODULEPATH=/etc/modulefiles" >> ~/.bashrc
+
+#gmsh
+RUN sudo apt-get install -y gmsh
+
+
+#DeepMD
 WORKDIR /home/app
-RUN sudo tar -zxvf gromacs-5.1.1.tar.gz
-WORKDIR /home/app/gromacs-5.1.1
-RUN sudo mkdir build
-WORKDIR /home/app/gromacs-5.1.1/build
-RUN sudo cmake .. -DGMG_BUILD_OWN_FFTW=ON -DREGRESSIONTEST_DOWNLOAD=ON && sudo make && sudo make check && sudo make install
-RUN export PATH="/usr/local/cmake/bin:$PATH"
+RUN git clone --recursive https://github.com/deepmodeling/deepmd-kit.git deepmd-kit
+WORKDIR /home/app/deepmd-kit
+RUN deepmd_source_dir=`pwd`
+WORKDIR /home/app/deepmd-kit/source
+RUN sudo mkdir build 
+WORKDIR /home/app/deepmd-kit/source/build
+RUN sudo cmake -DTENSORFLOW_ROOT=$tensorflow_root -DCMAKE_INSTALL_PREFIX=$deepmd_root .. && sudo make && sudo make install 
+
+#OOFEM
+RUN sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 92DE8183
+RUN sudo apt-get update && sudo apt-get install oofem oofem-mpi oofem-oofeg oofem-doc
+
