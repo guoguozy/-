@@ -1,9 +1,12 @@
 #%Module#########################################################                                                                                                                                       
 ##
-##              gmsh software modulefile
+##              DeePMD software modulefile
 ##
 
 proc ModulesHelp { } {
-	puts stderr "This is gmsh software"
+	puts stderr "This is DeePMD software"
 }
 
+set root "/usr/local/oofem"
+prepend-path PATH $root/build
+prepend-path LD_LIBRARY_PATH $root/lib

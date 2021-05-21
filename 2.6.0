@@ -1,9 +1,11 @@
 #%Module#########################################################                                                                                                                                       
 ##
-##              gmsh software modulefile
+##              oofem software modulefile
 ##
 
 proc ModulesHelp { } {
-	puts stderr "This is gmsh software"
+	puts stderr "This is oofem software"
 }
+ 
+prepend-path PATH /home/app/oofem/build
 

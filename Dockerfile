@@ -42,6 +42,14 @@ RUN echo "export MODULEPATH=/etc/modulefiles" >> ~/.bashrc
 RUN sudo apt-get install -y gmsh
 
 
+#OOFEM
+WORKDIR /home/app
+RUN git clone https://github.com/oofem/oofem.git
+WORKDIR /home/app/oofem
+RUN sudo mkdir  build
+WORKDIR /home/app/oofem/build
+RUN sudo cmake .. && sudo make
+
 #DeepMD
 WORKDIR /home/app
 RUN git clone --recursive https://github.com/deepmodeling/deepmd-kit.git deepmd-kit
@@ -50,9 +58,5 @@ RUN deepmd_source_dir=`pwd`
 WORKDIR /home/app/deepmd-kit/source
 RUN sudo mkdir build 
 WORKDIR /home/app/deepmd-kit/source/build
-RUN sudo cmake -DTENSORFLOW_ROOT=$tensorflow_root -DCMAKE_INSTALL_PREFIX=$deepmd_root .. && sudo make && sudo make install 
-
-#OOFEM
-RUN sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 92DE8183
-RUN sudo apt-get update && sudo apt-get install oofem oofem-mpi oofem-oofeg oofem-doc
+RUN sudo cmake -DTENSORFLOW_ROOT=$tensorflow_root -DCMAKE_INSTALL_PREFIX="/usr/local/deepmd" .. && sudo make && sudo make install 
 
